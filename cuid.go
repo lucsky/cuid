@@ -27,6 +27,9 @@ var (
 
 func init() {
 	hostname, err := os.Hostname()
+	if err != nil {
+		hostname = "dummy-host"
+	}
 	acc := int64(len(hostname) + BASE)
 	for i := range hostname {
 		acc = acc + int64(hostname[i])
