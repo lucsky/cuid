@@ -33,17 +33,6 @@ func Test_CUIDCollisions(t *testing.T) {
 	}
 }
 
-func Test_SlugType(t *testing.T) {
-	s := NewSlug()
-	if reflect.TypeOf(s).Name() != "string" {
-		t.Error("Incorrect CUID type")
-	}
-}
-
-func Test_SlugFormat(t *testing.T) {
-
-}
-
 func Benchmark_CUIDGeneration(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		New()
