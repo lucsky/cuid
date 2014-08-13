@@ -6,12 +6,9 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
-
-type Counter interface {
-	Next() int64
-}
 
 const (
 	BLOCK_SIZE = 4
@@ -43,7 +40,7 @@ func init() {
 
 func New() string {
 	if defaultCounter == nil {
-		defaultCounter = NewDefaultCounter()
+		defaultCounter = &DefaultCounter{}
 	}
 
 	timestampBlock := strconv.FormatInt(time.Now().Unix()*1000, BASE)
@@ -69,32 +66,26 @@ func pad(str string, size int) string {
 }
 
 // Default counter implementation
-// The default counter is a simply generator running in a goroutine
-// and providing values through a channel.
 
-type DefaultCounter struct {
-	counterChan chan int64
+type Counter interface {
+	Next() int64
 }
 
-func NewDefaultCounter() *DefaultCounter {
-	counter := &DefaultCounter{make(chan int64)}
-	go counter.loop()
-	<-counter.counterChan
-
-	return counter
+type DefaultCounter struct {
+	count int64
+	mutex sync.Mutex
 }
 
 func (c *DefaultCounter) Next() int64 {
-	return <-c.counterChan
-}
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
 
-func (c *DefaultCounter) loop() {
-	var count int64 = -1
-	for {
-		c.counterChan <- count
-		count = count + 1
-		if count >= discreteValues {
-			count = 0
-		}
+	counterValue := c.count
+
+	c.count = c.count + 1
+	if c.count >= discreteValues {
+		c.count = 0
 	}
+
+	return counterValue
 }
