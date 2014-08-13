@@ -16,14 +16,17 @@ const (
 )
 
 var (
-	defaultCounter Counter = nil
-	defaultRandom          = rand.New(rand.NewSource(time.Now().Unix()))
-	discreteValues         = int32(math.Pow(BASE, BLOCK_SIZE))
-	padding                = strings.Repeat("0", BLOCK_SIZE)
-	fingerprint            = ""
+	counter        Counter    = nil
+	random         *rand.Rand = nil
+	discreteValues            = int32(math.Pow(BASE, BLOCK_SIZE))
+	padding                   = strings.Repeat("0", BLOCK_SIZE)
+	fingerprint               = ""
 )
 
 func init() {
+	SetRandomSource(rand.NewSource(time.Now().Unix()))
+	SetCounter(&DefaultCounter{})
+
 	hostname, err := os.Hostname()
 	if err != nil {
 		hostname = "dummy-host"
@@ -39,16 +42,23 @@ func init() {
 	fingerprint = hostID + host
 }
 
+func SetRandomSource(src rand.Source) {
+	SetRandom(rand.New(src))
+}
+
+func SetRandom(rnd *rand.Rand) {
+	random = rnd
+}
+
+func SetCounter(cnt Counter) {
+	counter = cnt
+}
+
 func New() string {
-	if defaultCounter == nil {
-		defaultCounter = &DefaultCounter{}
-	}
-
 	timestampBlock := strconv.FormatInt(time.Now().Unix()*1000, BASE)
-	counterBlock := pad(strconv.FormatInt(int64(defaultCounter.Next()), BASE), BLOCK_SIZE)
-	randomBlock1 := pad(strconv.FormatInt(int64(defaultRandom.Int31n(discreteValues)), BASE), BLOCK_SIZE)
-	randomBlock2 := pad(strconv.FormatInt(int64(defaultRandom.Int31n(discreteValues)), BASE), BLOCK_SIZE)
-
+	counterBlock := pad(strconv.FormatInt(int64(counter.Next()), BASE), BLOCK_SIZE)
+	randomBlock1 := pad(strconv.FormatInt(int64(random.Int31n(discreteValues)), BASE), BLOCK_SIZE)
+	randomBlock2 := pad(strconv.FormatInt(int64(random.Int31n(discreteValues)), BASE), BLOCK_SIZE)
 	return "c" + timestampBlock + counterBlock + fingerprint + randomBlock1 + randomBlock2
 }
 
