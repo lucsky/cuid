@@ -7,6 +7,7 @@ type DefaultCounter struct {
 func NewDefaultCounter() *DefaultCounter {
 	counter := &DefaultCounter{make(chan int64)}
 	go counter.Loop()
+	<-counter.counterChan
 	return counter
 }
 
@@ -15,7 +16,7 @@ func (c *DefaultCounter) Next() int64 {
 }
 
 func (c *DefaultCounter) Loop() {
-	var count int64 = 0
+	var count int64 = -1
 	for {
 		c.counterChan <- count
 		count = count + 1
