@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -23,6 +24,7 @@ var (
 	fingerprint            = ""
 	randomSource           = rand.NewSource(time.Now().Unix())
 	random                 = rand.New(randomSource)
+	padding                = strings.Repeat("0", BLOCK_SIZE)
 )
 
 func init() {
@@ -54,7 +56,7 @@ func New() string {
 }
 
 func pad(str string, size int) string {
-	s := "0000000000" + str
+	s := padding + str
 	i := len(s) - size
 	return s[i:]
 }
