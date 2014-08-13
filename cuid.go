@@ -19,12 +19,11 @@ const (
 )
 
 var (
-	counter        Counter = nil
+	defaultCounter Counter = nil
+	defaultRandom          = rand.New(rand.NewSource(time.Now().Unix()))
 	discreteValues         = int64(math.Pow(BASE, BLOCK_SIZE))
-	fingerprint            = ""
-	randomSource           = rand.NewSource(time.Now().Unix())
-	random                 = rand.New(randomSource)
 	padding                = strings.Repeat("0", BLOCK_SIZE)
+	fingerprint            = ""
 )
 
 func init() {
@@ -43,20 +42,28 @@ func init() {
 }
 
 func New() string {
-	if counter == nil {
-		counter = NewDefaultCounter()
+	if defaultCounter == nil {
+		defaultCounter = NewDefaultCounter()
 	}
 
 	timestampBlock := strconv.FormatInt(time.Now().Unix()*1000, BASE)
-	counterBlock := pad(strconv.FormatInt(counter.Next(), BASE), BLOCK_SIZE)
-	randomBlock1 := pad(strconv.FormatInt(random.Int63n(discreteValues), BASE), BLOCK_SIZE)
-	randomBlock2 := pad(strconv.FormatInt(random.Int63n(discreteValues), BASE), BLOCK_SIZE)
+	counterBlock := pad(strconv.FormatInt(defaultCounter.Next(), BASE), BLOCK_SIZE)
+	randomBlock1 := pad(strconv.FormatInt(defaultRandom.Int63n(discreteValues), BASE), BLOCK_SIZE)
+	randomBlock2 := pad(strconv.FormatInt(defaultRandom.Int63n(discreteValues), BASE), BLOCK_SIZE)
 
 	return "c" + timestampBlock + counterBlock + fingerprint + randomBlock1 + randomBlock2
 }
 
 func pad(str string, size int) string {
-	s := padding + str
-	i := len(s) - size
-	return s[i:]
+	if len(str) == size {
+		return str
+	}
+
+	if len(str) < size {
+		str = padding + str
+	}
+
+	i := len(str) - size
+
+	return str[i:]
 }
