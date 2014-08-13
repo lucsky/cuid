@@ -18,7 +18,7 @@ const (
 var (
 	defaultCounter Counter = nil
 	defaultRandom          = rand.New(rand.NewSource(time.Now().Unix()))
-	discreteValues         = int64(math.Pow(BASE, BLOCK_SIZE))
+	discreteValues         = int32(math.Pow(BASE, BLOCK_SIZE))
 	padding                = strings.Repeat("0", BLOCK_SIZE)
 	fingerprint            = ""
 )
@@ -28,13 +28,14 @@ func init() {
 	if err != nil {
 		hostname = "dummy-host"
 	}
-	acc := int64(len(hostname) + BASE)
+
+	acc := len(hostname) + BASE
 	for i := range hostname {
-		acc = acc + int64(hostname[i])
+		acc = acc + int(hostname[i])
 	}
 
 	hostID := pad(strconv.FormatInt(int64(os.Getpid()), BASE), 2)
-	host := pad(strconv.FormatInt(acc, 10), 2)
+	host := pad(strconv.FormatInt(int64(acc), 10), 2)
 	fingerprint = hostID + host
 }
 
@@ -44,9 +45,9 @@ func New() string {
 	}
 
 	timestampBlock := strconv.FormatInt(time.Now().Unix()*1000, BASE)
-	counterBlock := pad(strconv.FormatInt(defaultCounter.Next(), BASE), BLOCK_SIZE)
-	randomBlock1 := pad(strconv.FormatInt(defaultRandom.Int63n(discreteValues), BASE), BLOCK_SIZE)
-	randomBlock2 := pad(strconv.FormatInt(defaultRandom.Int63n(discreteValues), BASE), BLOCK_SIZE)
+	counterBlock := pad(strconv.FormatInt(int64(defaultCounter.Next()), BASE), BLOCK_SIZE)
+	randomBlock1 := pad(strconv.FormatInt(int64(defaultRandom.Int31n(discreteValues)), BASE), BLOCK_SIZE)
+	randomBlock2 := pad(strconv.FormatInt(int64(defaultRandom.Int31n(discreteValues)), BASE), BLOCK_SIZE)
 
 	return "c" + timestampBlock + counterBlock + fingerprint + randomBlock1 + randomBlock2
 }
@@ -68,15 +69,15 @@ func pad(str string, size int) string {
 // Default counter implementation
 
 type Counter interface {
-	Next() int64
+	Next() int32
 }
 
 type DefaultCounter struct {
-	count int64
+	count int32
 	mutex sync.Mutex
 }
 
-func (c *DefaultCounter) Next() int64 {
+func (c *DefaultCounter) Next() int32 {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
