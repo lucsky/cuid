@@ -67,3 +67,34 @@ func pad(str string, size int) string {
 
 	return str[i:]
 }
+
+// Default counter implementation
+// The default counter is a simply generator running in a goroutine
+// and providing values through a channel.
+
+type DefaultCounter struct {
+	counterChan chan int64
+}
+
+func NewDefaultCounter() *DefaultCounter {
+	counter := &DefaultCounter{make(chan int64)}
+	go counter.loop()
+	<-counter.counterChan
+
+	return counter
+}
+
+func (c *DefaultCounter) Next() int64 {
+	return <-c.counterChan
+}
+
+func (c *DefaultCounter) loop() {
+	var count int64 = -1
+	for {
+		c.counterChan <- count
+		count = count + 1
+		if count >= discreteValues {
+			count = 0
+		}
+	}
+}
