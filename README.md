@@ -4,7 +4,7 @@ Collision-resistant hashes for the cloud, in Go.
 
 The ```cuid`` package provides collision-resistant ids optimized for horizontal scaling and sequential lookup performance. This README file is just going to cover the basics and the Go-specific implementation details.
 
-**Please refer to the [main project site](http://usecuid.org) for the full rationale behine CUIDs.**
+**Please refer to the [main project site](http://usecuid.org) for the full rationale behind CUIDs.**
 
 ## Sample CUID
 
