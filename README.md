@@ -10,6 +10,16 @@ The ```cuid`` package provides collision-resistant ids optimized for horizontal 
 
 ch72gsb320000udocl363eofy
 
+# Installation
+
+**HEAD:**
+
+```go get github.com/lucsky/cuid```
+
+**v1.0.0:**
+
+```go get gopkg.in/lucsky/cuid.v1```
+
 ## Example usage
 
 ```Go
@@ -25,4 +35,4 @@ func main() {
 
 ## Go package specific features
 
-The Go cuid package provides APIs to specify a custom random source as well as a custom counter source.
+The Go cuid package provides APIs to specify a custom random source as well as a custom counter. A custom counter implementation could provide a centralized Redis base counter, for example.
