@@ -33,6 +33,21 @@ func Test_CUIDCollisions(t *testing.T) {
 	}
 }
 
+func newCUID(chn chan error) {
+	New()
+	chn <- nil
+}
+
+func Test_DataRaces(t *testing.T) {
+	chn := make(chan error)
+
+	go newCUID(chn)
+	go newCUID(chn)
+
+	<-chn
+	<-chn
+}
+
 func Benchmark_CUIDGeneration(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		New()

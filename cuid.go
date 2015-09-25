@@ -16,6 +16,7 @@ const (
 )
 
 var (
+	mutex          sync.Mutex
 	counter        Counter    = nil
 	random         *rand.Rand = nil
 	discreteValues            = int32(math.Pow(BASE, BLOCK_SIZE))
@@ -47,18 +48,30 @@ func SetRandomSource(src rand.Source) {
 }
 
 func SetRandom(rnd *rand.Rand) {
+	mutex.Lock()
 	random = rnd
+	mutex.Unlock()
 }
 
 func SetCounter(cnt Counter) {
+	mutex.Lock()
 	counter = cnt
+	mutex.Unlock()
 }
 
 func New() string {
 	timestampBlock := strconv.FormatInt(time.Now().Unix()*1000, BASE)
 	counterBlock := pad(strconv.FormatInt(int64(counter.Next()), BASE), BLOCK_SIZE)
+
+	// Global random generation functions from the math/rand package use a global
+	// locked source, custom Rand objects need to be manually synchronized to avoid
+	// race conditions.
+
+	mutex.Lock()
 	randomBlock1 := pad(strconv.FormatInt(int64(random.Int31n(discreteValues)), BASE), BLOCK_SIZE)
 	randomBlock2 := pad(strconv.FormatInt(int64(random.Int31n(discreteValues)), BASE), BLOCK_SIZE)
+	mutex.Unlock()
+
 	return "c" + timestampBlock + counterBlock + fingerprint + randomBlock1 + randomBlock2
 }
 
