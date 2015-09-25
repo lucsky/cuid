@@ -21,6 +21,7 @@ var (
 	discreteValues            = int32(math.Pow(BASE, BLOCK_SIZE))
 	padding                   = strings.Repeat("0", BLOCK_SIZE)
 	fingerprint               = ""
+	mu             sync.Mutex
 )
 
 func init() {
@@ -47,14 +48,20 @@ func SetRandomSource(src rand.Source) {
 }
 
 func SetRandom(rnd *rand.Rand) {
+	mu.Lock()
+	defer mu.Unlock()
 	random = rnd
 }
 
 func SetCounter(cnt Counter) {
+	mu.Lock()
+	defer mu.Unlock()
 	counter = cnt
 }
 
 func New() string {
+	mu.Lock()
+	defer mu.Unlock()
 	timestampBlock := strconv.FormatInt(time.Now().Unix()*1000, BASE)
 	counterBlock := pad(strconv.FormatInt(int64(counter.Next()), BASE), BLOCK_SIZE)
 	randomBlock1 := pad(strconv.FormatInt(int64(random.Int31n(discreteValues)), BASE), BLOCK_SIZE)
