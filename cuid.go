@@ -89,7 +89,6 @@ type DefaultCounter struct {
 
 func (c *DefaultCounter) Next() int32 {
 	c.mutex.Lock()
-	defer c.mutex.Unlock()
 
 	counterValue := c.count
 
@@ -97,6 +96,8 @@ func (c *DefaultCounter) Next() int32 {
 	if c.count >= discreteValues {
 		c.count = 0
 	}
+
+	c.mutex.Unlock()
 
 	return counterValue
 }
