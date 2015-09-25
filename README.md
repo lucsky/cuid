@@ -16,7 +16,7 @@ ch72gsb320000udocl363eofy
 
 ```go get github.com/lucsky/cuid```
 
-**v1.0.0:**
+**v1.0.1:**
 
 ```go get gopkg.in/lucsky/cuid.v1```
 
