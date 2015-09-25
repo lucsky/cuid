@@ -36,3 +36,8 @@ func main() {
 ## Go package specific features
 
 The Go cuid package provides APIs to specify a custom random source as well as a custom counter. A custom counter implementation could provide a centralized Redis base counter, for example.
+
+## Contributors
+
+- Luc Heinrich (lucsky, author)
+- Thomas Hopkins (hopkinsth)
