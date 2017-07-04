@@ -75,6 +75,34 @@ func New() string {
 	return "c" + timestampBlock + counterBlock + fingerprint + randomBlock1 + randomBlock2
 }
 
+func Slug() string {
+	timestamp := strconv.FormatInt(time.Now().Unix()*1000, BASE)
+	counter := strconv.FormatInt(int64(counter.Next()), BASE)
+
+	mutex.Lock()
+	random := strconv.FormatInt(int64(random.Int31n(discreteValues)), BASE)
+	mutex.Unlock()
+
+	timestampBlock := timestamp[len(timestamp)-2:]
+	printBlock := fingerprint[0:1] + fingerprint[len(fingerprint)-1:]
+	var counterBlock string
+	var randomBlock string
+
+	if len(counter) < 4 {
+		counterBlock = counter
+	} else {
+		counterBlock = counter[len(counter)-4:]
+	}
+
+	if len(random) < 4 {
+		randomBlock = random
+	} else {
+		randomBlock = random[len(random)-4:]
+	}
+
+	return timestampBlock + counterBlock + printBlock + randomBlock
+}
+
 func pad(str string, size int) string {
 	if len(str) == size {
 		return str
