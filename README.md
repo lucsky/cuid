@@ -10,6 +10,10 @@ The ```cuid`` package provides collision-resistant ids optimized for horizontal 
 
 ch72gsb320000udocl363eofy
 
+## Sample CUID Slug
+
+ew0k9fwpl
+
 # Installation
 
 **HEAD:**
@@ -30,6 +34,7 @@ import "gopkg.in/lucsky/cuid.v1"
 
 func main() {
     fmt.Println(cuid.New())
+    fmt.Println(cuid.Slug())
 }
 ```
 

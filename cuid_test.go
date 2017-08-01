@@ -33,6 +33,24 @@ func Test_CUIDCollisions(t *testing.T) {
 	}
 }
 
+func Test_CUIDSlugFormat(t *testing.T) {
+	c := Slug()
+	if len(c) < 6 || len(c) > 12 {
+		t.Errorf("Slug incorrect format. Len: %d", len(c))
+	}
+}
+
+func Test_CUIDSlugCollisions(t *testing.T) {
+	ids := map[string]bool{}
+	for i := 0; i < 60000; i++ {
+		id := Slug()
+		if ids[id] == true {
+			t.Errorf("Collision detected, at iteration %d", i)
+		}
+		ids[id] = true
+	}
+}
+
 func newCUID(chn chan error) {
 	New()
 	chn <- nil
@@ -51,5 +69,11 @@ func Test_DataRaces(t *testing.T) {
 func Benchmark_CUIDGeneration(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		New()
+	}
+}
+
+func Benchmark_CUIDSlugGeneration(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Slug()
 	}
 }
