@@ -17,11 +17,11 @@ const (
 
 var (
 	mutex          sync.Mutex
-	counter        Counter    = nil
-	random         *rand.Rand = nil
-	discreteValues            = int32(math.Pow(base, blockSize))
-	padding                   = strings.Repeat("0", blockSize)
-	fingerprint               = ""
+	counter        Counter
+	random         *rand.Rand
+	discreteValues = int32(math.Pow(base, blockSize))
+	padding        = strings.Repeat("0", blockSize)
+	fingerprint    = ""
 )
 
 func init() {
