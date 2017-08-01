@@ -16,7 +16,7 @@ func Test_CUIDType(t *testing.T) {
 
 func Test_CUIDFormat(t *testing.T) {
 	c := New()
-	format := regexp.MustCompile(fmt.Sprintf("c[0-9a-z]{%d}", 6*BLOCK_SIZE))
+	format := regexp.MustCompile(fmt.Sprintf("c[0-9a-z]{%d}", 6*blockSize))
 	if !format.MatchString(c) {
 		t.Error("Incorrect format")
 	}

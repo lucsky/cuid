@@ -11,16 +11,16 @@ import (
 )
 
 const (
-	BLOCK_SIZE = 4
-	BASE       = 36
+	blockSize = 4
+	base      = 36
 )
 
 var (
 	mutex          sync.Mutex
 	counter        Counter    = nil
 	random         *rand.Rand = nil
-	discreteValues            = int32(math.Pow(BASE, BLOCK_SIZE))
-	padding                   = strings.Repeat("0", BLOCK_SIZE)
+	discreteValues            = int32(math.Pow(base, blockSize))
+	padding                   = strings.Repeat("0", blockSize)
 	fingerprint               = ""
 )
 
@@ -33,12 +33,12 @@ func init() {
 		hostname = "dummy-host"
 	}
 
-	acc := len(hostname) + BASE
+	acc := len(hostname) + base
 	for i := range hostname {
 		acc = acc + int(hostname[i])
 	}
 
-	hostID := pad(strconv.FormatInt(int64(os.Getpid()), BASE), 2)
+	hostID := pad(strconv.FormatInt(int64(os.Getpid()), base), 2)
 	host := pad(strconv.FormatInt(int64(acc), 10), 2)
 	fingerprint = hostID + host
 }
@@ -60,27 +60,27 @@ func SetCounter(cnt Counter) {
 }
 
 func New() string {
-	timestampBlock := strconv.FormatInt(time.Now().Unix()*1000, BASE)
-	counterBlock := pad(strconv.FormatInt(int64(counter.Next()), BASE), BLOCK_SIZE)
+	timestampBlock := strconv.FormatInt(time.Now().Unix()*1000, base)
+	counterBlock := pad(strconv.FormatInt(int64(counter.Next()), base), blockSize)
 
 	// Global random generation functions from the math/rand package use a global
 	// locked source, custom Rand objects need to be manually synchronized to avoid
 	// race conditions.
 
 	mutex.Lock()
-	randomBlock1 := pad(strconv.FormatInt(int64(random.Int31n(discreteValues)), BASE), BLOCK_SIZE)
-	randomBlock2 := pad(strconv.FormatInt(int64(random.Int31n(discreteValues)), BASE), BLOCK_SIZE)
+	randomBlock1 := pad(strconv.FormatInt(int64(random.Int31n(discreteValues)), base), blockSize)
+	randomBlock2 := pad(strconv.FormatInt(int64(random.Int31n(discreteValues)), base), blockSize)
 	mutex.Unlock()
 
 	return "c" + timestampBlock + counterBlock + fingerprint + randomBlock1 + randomBlock2
 }
 
 func Slug() string {
-	timestamp := strconv.FormatInt(time.Now().Unix()*1000, BASE)
-	counter := strconv.FormatInt(int64(counter.Next()), BASE)
+	timestamp := strconv.FormatInt(time.Now().Unix()*1000, base)
+	counter := strconv.FormatInt(int64(counter.Next()), base)
 
 	mutex.Lock()
-	random := strconv.FormatInt(int64(random.Int31n(discreteValues)), BASE)
+	random := strconv.FormatInt(int64(random.Int31n(discreteValues)), base)
 	mutex.Unlock()
 
 	timestampBlock := timestamp[len(timestamp)-2:]
