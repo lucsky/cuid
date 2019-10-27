@@ -1,9 +1,7 @@
 package cuid
 
 import (
-	"fmt"
 	"reflect"
-	"regexp"
 	"testing"
 )
 
@@ -16,8 +14,7 @@ func Test_CUIDType(t *testing.T) {
 
 func Test_CUIDFormat(t *testing.T) {
 	c := New()
-	format := regexp.MustCompile(fmt.Sprintf("c[0-9a-z]{%d}", 6*blockSize))
-	if !format.MatchString(c) {
+	if err := IsCuid(c); err != nil {
 		t.Error("Incorrect format")
 	}
 }
@@ -35,7 +32,7 @@ func Test_CUIDCollisions(t *testing.T) {
 
 func Test_CUIDSlugFormat(t *testing.T) {
 	c := Slug()
-	if len(c) < 6 || len(c) > 12 {
+	if err := IsSlug(c); err != nil {
 		t.Errorf("Slug incorrect format. Len: %d", len(c))
 	}
 }

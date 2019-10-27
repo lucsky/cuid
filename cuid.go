@@ -1,9 +1,12 @@
 package cuid
 
 import (
+	"errors"
+	"fmt"
 	"math"
 	"math/rand"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -101,6 +104,21 @@ func Slug() string {
 	}
 
 	return timestampBlock + counterBlock + printBlock + randomBlock
+}
+
+func IsCuid(c string) error {
+	format := regexp.MustCompile(fmt.Sprintf("c[0-9a-z]{%d}", 6*blockSize))
+	if !format.MatchString(c) {
+		return errors.New("Incorrect format")
+	}
+	return nil
+}
+
+func IsSlug(s string) error {
+	if len(s) < 6 || len(s) > 12 {
+		return errors.New("Incorrect format")
+	}
+	return nil
 }
 
 func pad(str string, size int) string {
