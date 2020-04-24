@@ -25,6 +25,7 @@ var (
 	discreteValues = int32(math.Pow(base, blockSize))
 	padding        = strings.Repeat("0", blockSize)
 	fingerprint    = ""
+	format         = regexp.MustCompile(fmt.Sprintf("c[0-9a-z]{%d}", 6*blockSize))
 )
 
 func init() {
@@ -107,7 +108,6 @@ func Slug() string {
 }
 
 func IsCuid(c string) error {
-	format := regexp.MustCompile(fmt.Sprintf("c[0-9a-z]{%d}", 6*blockSize))
 	if !format.MatchString(c) {
 		return errors.New("Incorrect format")
 	}
