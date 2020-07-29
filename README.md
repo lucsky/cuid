@@ -30,11 +30,11 @@ ew0k9fwpl
 package main
 
 import (
+    "crypto/rand"
+    "fmt"
 
-"crypto/rand"
-"fmt"
+    "gopkg.in/lucsky/cuid.v1"
 )
-import "gopkg.in/lucsky/cuid.v1"
 
 func main() {
     // Generate pseudo-random CUID
@@ -42,7 +42,7 @@ func main() {
     // Generate slug
     fmt.Println(cuid.Slug())
 
-    // Generate cryptographically random CUID
+    // Generate cryptographic-random CUID
     c, err := cuid.NewCrypto(rand.Reader)
     if err != nil {
         fmt.Printf("%v", err)
