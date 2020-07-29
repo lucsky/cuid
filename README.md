@@ -29,12 +29,26 @@ ew0k9fwpl
 ```Go
 package main
 
-import fmt
+import (
+
+"crypto/rand"
+"fmt"
+)
 import "gopkg.in/lucsky/cuid.v1"
 
 func main() {
+    // Generate pseudo-random CUID
     fmt.Println(cuid.New())
+    // Generate slug
     fmt.Println(cuid.Slug())
+
+    // Generate cryptographically random CUID
+    c, err := cuid.NewCrypto(rand.Reader)
+    if err != nil {
+        fmt.Printf("%v", err)
+        return
+    }
+    fmt.Println(c)
 }
 ```
 
