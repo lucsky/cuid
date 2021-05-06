@@ -63,3 +63,5 @@ The Go cuid package provides APIs to specify a custom random source as well as a
 - fiatjaf
 - Marcus Dantas (@mpsdantas)
 - Oscar Forner Martinez (@maitesin)
+- Mike Frey (@mikefrey)
+
