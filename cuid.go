@@ -1,9 +1,12 @@
 package cuid
 
 import (
+	cryptoRand "crypto/rand"
 	"errors"
 	"fmt"
+	"io"
 	"math"
+	"math/big"
 	"math/rand"
 	"os"
 	"regexp"
@@ -64,19 +67,32 @@ func SetCounter(cnt Counter) {
 }
 
 func New() string {
-	timestampBlock := strconv.FormatInt(time.Now().Unix()*1000, base)
-	counterBlock := pad(strconv.FormatInt(int64(counter.Next()), base), blockSize)
-
 	// Global random generation functions from the math/rand package use a global
 	// locked source, custom Rand objects need to be manually synchronized to avoid
 	// race conditions.
 
 	mutex.Lock()
-	randomBlock1 := pad(strconv.FormatInt(int64(random.Int31n(discreteValues)), base), blockSize)
-	randomBlock2 := pad(strconv.FormatInt(int64(random.Int31n(discreteValues)), base), blockSize)
+	randomInt1 := int64(random.Int31n(discreteValues))
+	randomInt2 := int64(random.Int31n(discreteValues))
 	mutex.Unlock()
 
-	return "c" + timestampBlock + counterBlock + fingerprint + randomBlock1 + randomBlock2
+	return assembleCUID(randomInt1, randomInt2)
+}
+
+func NewCrypto(reader io.Reader) (string, error) {
+	r1, err := cryptoRand.Int(reader, big.NewInt(int64(discreteValues)))
+	if err != nil {
+		return "", err
+	}
+
+	r2, err := cryptoRand.Int(reader, big.NewInt(int64(discreteValues)))
+	if err != nil {
+		return "", err
+	}
+
+	cuid := assembleCUID(r1.Int64(), r2.Int64())
+
+	return cuid, nil
 }
 
 func Slug() string {
@@ -119,6 +135,15 @@ func IsSlug(s string) error {
 		return errors.New("Incorrect format")
 	}
 	return nil
+}
+
+func assembleCUID(randomInt1, randomInt2 int64) string {
+	timestampBlock := strconv.FormatInt(time.Now().Unix()*1000, base)
+	counterBlock := pad(strconv.FormatInt(int64(counter.Next()), base), blockSize)
+	randomBlock1 := pad(strconv.FormatInt(randomInt1, base), blockSize)
+	randomBlock2 := pad(strconv.FormatInt(randomInt2, base), blockSize)
+
+	return "c" + timestampBlock + counterBlock + fingerprint + randomBlock1 + randomBlock2
 }
 
 func pad(str string, size int) string {
