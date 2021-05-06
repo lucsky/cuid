@@ -96,11 +96,11 @@ func NewCrypto(reader io.Reader) (string, error) {
 }
 
 func Slug() string {
-	timestamp := strconv.FormatInt(time.Now().Unix()*1000, base)
+	timestamp := strconv.FormatInt(makeTimestamp(), base)
 	counter := strconv.FormatInt(int64(counter.Next()), base)
 
 	mutex.Lock()
-	random := strconv.FormatInt(int64(random.Int31n(discreteValues)), base)
+	randomStr := strconv.FormatInt(int64(random.Int31n(discreteValues)), base)
 	mutex.Unlock()
 
 	timestampBlock := timestamp[len(timestamp)-2:]
@@ -114,10 +114,10 @@ func Slug() string {
 		counterBlock = counter[len(counter)-4:]
 	}
 
-	if len(random) < 4 {
-		randomBlock = random
+	if len(randomStr) < 4 {
+		randomBlock = randomStr
 	} else {
-		randomBlock = random[len(random)-4:]
+		randomBlock = randomStr[len(randomStr)-4:]
 	}
 
 	return timestampBlock + counterBlock + printBlock + randomBlock
@@ -137,13 +137,19 @@ func IsSlug(s string) error {
 	return nil
 }
 
+// Utility functions
+
 func assembleCUID(randomInt1, randomInt2 int64) string {
-	timestampBlock := strconv.FormatInt(time.Now().Unix()*1000, base)
+	timestampBlock := strconv.FormatInt(makeTimestamp(), base)
 	counterBlock := pad(strconv.FormatInt(int64(counter.Next()), base), blockSize)
 	randomBlock1 := pad(strconv.FormatInt(randomInt1, base), blockSize)
 	randomBlock2 := pad(strconv.FormatInt(randomInt2, base), blockSize)
 
 	return "c" + timestampBlock + counterBlock + fingerprint + randomBlock1 + randomBlock2
+}
+
+func makeTimestamp() int64 {
+	return time.Now().UnixNano() * int64(time.Nanosecond) / int64(time.Millisecond)
 }
 
 func pad(str string, size int) string {
