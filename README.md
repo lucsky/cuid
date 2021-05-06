@@ -16,13 +16,7 @@ ew0k9fwpl
 
 # Installation
 
-**HEAD:**
-
-```go get github.com/lucsky/cuid```
-
-**v1.0.1:**
-
-```go get gopkg.in/lucsky/cuid.v1```
+```go get -u github.com/lucsky/cuid```
 
 ## Example usage
 
