@@ -27,7 +27,7 @@ import (
     "crypto/rand"
     "fmt"
 
-    "gopkg.in/lucsky/cuid.v1"
+    "github.com/lucsky/cuid"
 )
 
 func main() {
