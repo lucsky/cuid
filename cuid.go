@@ -46,7 +46,7 @@ func init() {
 	}
 
 	hostID := pad(strconv.FormatInt(int64(os.Getpid()), base), 2)
-	host := pad(strconv.FormatInt(int64(acc), 10), 2)
+	host := pad(strconv.FormatInt(int64(acc), base), 2)
 	fingerprint = hostID + host
 }
 
