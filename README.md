@@ -16,7 +16,7 @@ ew0k9fwpl
 
 # Installation
 
-```go get -u github.com/lucsky/cuid```
+`go get -u github.com/lucsky/cuid`
 
 ## Example usage
 
@@ -52,10 +52,10 @@ The Go cuid package provides APIs to specify a custom random source as well as a
 
 ## Contributors
 
-- Luc Heinrich (@lucsky, author)
-- Thomas Hopkins (@hopkinsth)
-- fiatjaf
-- Marcus Dantas (@mpsdantas)
-- Oscar Forner Martinez (@maitesin)
-- Mike Frey (@mikefrey)
-
+-   Luc Heinrich (@lucsky, author)
+-   Thomas Hopkins (@hopkinsth)
+-   fiatjaf
+-   Marcus Dantas (@mpsdantas)
+-   Oscar Forner Martinez (@maitesin)
+-   Mike Frey (@mikefrey)
+-   Andris Mednis (@andrismednis)
